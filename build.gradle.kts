@@ -16,11 +16,10 @@ plugins {
     id("org.jetbrains.dokka") version "1.4.32"
     id("maven-publish")
 }
-allprojects {
     apply(plugin = "kotlin")
     apply(plugin = "com.github.johnrengelman.shadow")
     tasks.withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {
-        archiveFileName.set("${rootProject.name}.jar")
+        archiveFileName.set("${rootProject.name}-shadow.jar")
     }
 
     repositories {
@@ -38,17 +37,11 @@ allprojects {
     dependencies {
 //    api(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
         compileOnly("org.spigotmc:spigot-api:1.18.2-R0.1-SNAPSHOT")
+        compileOnly("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version")
 
     }
 
-    lateinit var sourcesArtifact: PublishArtifact
 
-
-    tasks {
-        artifacts {
-            sourcesArtifact = archives(jar)
-        }
-    }
 
     apply(plugin = "maven-publish")
 
@@ -71,11 +64,10 @@ allprojects {
                 groupId = "io.github.${githubUserName.toLowerCaseAsciiOnly()}"
                 artifactId = project.name.toLowerCase()
                 version = System.getenv("GITHUB_BUILD_NUMBER")?: project.version.toString()
-                artifact(sourcesArtifact)
+                from(components["java"])
             }
         }
 
     }
 
 
-}
