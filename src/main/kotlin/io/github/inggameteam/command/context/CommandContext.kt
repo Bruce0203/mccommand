@@ -7,5 +7,6 @@ open class CommandContext<S>(
     val args
         get() =
             if (argument.isEmpty()) ArrayList()
-            else argument.subList(1, argument.size).map { it.name }.toList()
+            else argument.subList(1, argument.size)
+                .mapNotNull { arg -> arg.name.takeIf { it.trim().isNotBlank() } }.toList()
 }
